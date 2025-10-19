@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌟 National Institute & DG Skill 🌟</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@400;600&display=swap');
+  body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#eef3f9,#ffffff);color:#222;text-align:center;padding:15px;}
+  h1{font-family:"Playfair Display",serif;font-style:italic;color:#007bff;font-size:34px;margin-bottom:5px;text-shadow:1px 1px 2px rgba(0,0,0,0.1);}
+  h2{font-size:18px;color:#444;margin-bottom:20px;font-style:italic;}
+  .chart-box,.section{background:#fff;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:20px;margin:20px auto;max-width:500px;text-align:left;}
+  label{font-weight:600;display:block;margin:10px 0 5px;}
+  input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;font-size:14px;margin-bottom:10px;}
+  button{background:#007bff;color:#fff;border:none;cursor:pointer;transition:0.3s;}
+  button:hover{background:#0056b3;}
+  .contact{background:#e8f0ff;border-radius:12px;padding:15px;margin-top:10px;text-align:center;font-size:15px;}
+  .whatsapp-btn{background:#25d366;color:#fff;border:none;padding:10px 15px;border-radius:8px;text-decoration:none;display:inline-block;font-weight:bold;}
+  .whatsapp-btn:hover{background:#1da851;}
+  #receiptBox{display:none;background:#fff;padding:20px;border-radius:10px;margin-top:20px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+  #recordsSection{display:none;margin-top:25px;}
+  table{width:100%;border-collapse:collapse;background:#fff;}
+  th,td{border:1px solid #ddd;padding:8px;font-size:13px;text-align:center;}
+  .verified{color:green;font-weight:bold;}
+  .not-verified{color:red;font-weight:bold;}
+  .rejected{color:#c00;font-weight:bold;}
+
+  /* 🔹 Logo + Permanent Founder Photo */
+  .logo-area {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .logo-area img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    animation: fadeIn 2s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
+  }
+  .fixed-photo-note {
+    font-size: 13px;
+    color: gray;
+    margin-top: 5px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- 🔹 Permanent Institute & Founder Section -->
+<div class="logo-area">
+  <img src="founder.jpg" alt="Institute Founder">
+  <h1>🌟 National Institute & DG Skill 🌟</h1>
+  <h2>Empowering Skills, Empowering Futures</h2>
+  <p class="fixed-photo-note">(Founder photo permanently set — cannot be changed)</p>
+</div>
+
+<div class="chart-box">
+  <h3>📊 Popular Courses Overview</h3>
+  <canvas id="courseChart" width="400" height="300"></canvas>
+</div>
+
+<div class="section">
+<h3>📋 Apply for Admission</h3>
+<label>Full Name:</label><input id="name" placeholder="Enter your full name">
+<label>Email:</label><input id="email" type="email" placeholder="example@email.com">
+<label>Phone Number:</label><input id="phone" placeholder="03XXXXXXXXX">
+<label>Select Course:</label>
+<select id="course">
+  <option value="">-- Choose Course --</option>
+  <option>Web Development</option><option>Graphic Design</option><option>Video Editing</option>
+  <option>Amazon Virtual Assistant</option><option>Digital Marketing</option><option>Freelancing</option>
+  <option>SEO</option><option>MS Office</option><option>App Development</option><option>DIT</option><option>English Language</option>
+</select>
+<button id="applyBtn">Apply Now</button>
+<p id="applyResult" style="color:green;font-weight:bold;"></p>
+</div>
+
+<div class="section">
+<h3>💰 Pay Course Fee</h3>
+<p>Enter your Roll Number (from Admission):</p>
+<input id="rollInput" placeholder="Enter your Roll No (e.g. NIS-001)">
+<label>Amount (Min Rs. 2000)</label><input id="amount" type="number" placeholder="Minimum Rs. 2000">
+<label>Transaction Date:</label><input id="txDate" type="date">
+<label>Upload Payment Screenshot:</label><input id="screenshot" type="file" accept="image/*">
+<div class="contact">
+  💰 <b>Payment Options:</b><br><br>
+  📱 <b>EasyPaisa:</b> 0334-3821372<br>
+  💬 <b>WhatsApp:</b> 0336-9973014<br><br>
+  <button class="whatsapp-btn" onclick="sendPayment()">Send Rs.2000 Confirmation</button>
+</div>
+<button id="payBtn">Submit Payment</button>
+</div>
+
+<div id="receiptBox">
+  <h3>🎟️ Payment Receipt</h3>
+  <div id="receiptDetails"></div>
+  <button id="downloadBtn">Download PDF</button>
+</div>
+
+<hr>
+<button id="openRecordsBtn">🔐 View Records (Admin)</button>
+<button id="exportBtn">⬇️ Export CSV</button>
+<button id="pdfBtn">📄 Export PDF</button>
+
+<section id="recordsSection">
+  <input id="searchInput" placeholder="Search by name, roll, or phone...">
+  <table>
+    <thead><tr><th>Roll</th><th>Name</th><th>Course</th><th>Amount</th><th>Phone</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="recordsBody"></tbody>
+  </table>
+</section>
+
+<script>
+const { jsPDF } = window.jspdf;
+const ADMIN_PASSWORD = "wahab1122";
+
+function sendPayment() {
+  const amount = 2000;
+  const number = "03343821362";
+  const message = `Hello, I have sent Rs.${amount} to ${number} via EasyPaisa. Please confirm my payment.`;
+  window.open(`https://wa.me/923369973014?text=${encodeURIComponent(message)}`, "_blank");
+}
+
+const ctx = document.getElementById('courseChart');
+new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels: ['Web Development','Graphic Design','Video Editing','Amazon VA','Digital Marketing','Freelancing','SEO','MS Office','App Development','DIT','English Language'],
+    datasets: [{
+      label: 'Course Popularity',
+      data: [12,9,8,10,11,7,6,8,9,5,4],
+      backgroundColor: ['#007bff','#28a745','#ffc107','#17a2b8','#ff6384','#36a2eb','#ff9f40','#6f42c1','#20c997','#dc3545','#343a40']
+    }]
+  },
+  options: {plugins:{legend:{position:'bottom'},title:{display:true,text:'Course Popularity Chart',font:{size:16}}}}
+});
+
+function loadRecords(){const raw=localStorage.getItem('nis_students');return raw?JSON.parse(raw):[];}
+function saveRecords(arr){localStorage.setItem('nis_students',JSON.stringify(arr));}
+function getNextRoll(){let last=localStorage.getItem('nis_last_roll');let next=1;if(last)next=parseInt(last)+1;localStorage.setItem('nis_last_roll',next);return 'NIS-'+String(next).padStart(3,'0');}
+
+document.getElementById('applyBtn').onclick=()=>{
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const course=document.getElementById('course').value;
+  if(!name||!email||!phone||!course){alert("⚠️ Please fill all admission fields.");return;}
+  const roll=getNextRoll();
+  const students=loadRecords();
+  students.push({roll,name,email,phone,course,amount:0,status:'Pending'});
+  saveRecords(students);
+  document.getElementById('applyResult').innerHTML=`✅ Application saved! Your Roll No is <b>${roll}</b>`;
+  document.getElementById('name').value=document.getElementById('email').value=document.getElementById('phone').value='';
+  document.getElementById('course').value='';
+};
+
+document.getElementById('payBtn').onclick=()=>{
+  const roll=document.getElementById('rollInput').value.trim().toUpperCase();
+  const amount=parseInt(document.getElementById('amount').value.trim());
+  const txDate=document.getElementById('txDate').value;
+  const file=document.getElementById('screenshot').files[0];
+  if(!roll||!amount||!txDate||!file){alert("⚠️ Please fill all payment fields.");return;}
+  if(amount<2000){alert("❌ Minimum fee is Rs. 2000.");return;}
+
+  const reader=new FileReader();
+  reader.onload=async()=>{
+    const imgData=reader.result;
+    alert("⏳ Checking your screenshot, please wait...");
+    const result=await Tesseract.recognize(imgData,'eng');
+    const text=result.data.text.toLowerCase();
+    const hasNumber=text.includes('03343821362');
+    const hasAmount=text.includes('2000')||text.includes('rs2000');
+    const hasTRX=text.includes('trx');
+    const hasToday=text.includes(new Date().getDate().toString());
+    if(!(hasNumber && hasAmount && hasTRX && hasToday)){
+      alert("❌ Screenshot invalid or unclear. Please upload correct payment proof.");
+      return;
+    }
+    const data=loadRecords();const idx=data.findIndex(x=>x.roll===roll);
+    if(idx===-1){alert("❌ Invalid Roll Number. Please apply first.");return;}
+    const txId='TX-'+Math.random().toString(36).substring(2,8).toUpperCase();
+    data[idx].amount=amount;data[idx].date=txDate;data[idx].txid=txId;data[idx].screenshot=imgData;data[idx].status='Pending';
+    saveRecords(data);
+    const r=data[idx];
+    document.getElementById('receiptBox').style.display='block';
+    document.getElementById('receiptDetails').innerHTML=`Roll: ${r.roll}<br>Name: ${r.name}<br>Course: ${r.course}<br>Amount: Rs.${r.amount}<br>Date: ${r.date}<br>TXID: ${txId}`;
+    document.getElementById('downloadBtn').onclick=()=>{
+      const doc=new jsPDF();doc.text('National Institute & DG Skill',20,20);
+      doc.text(`Roll: ${r.roll}`,20,40);doc.text(`Name: ${r.name}`,20,50);
+      doc.text(`Course: ${r.course}`,20,60);doc.text(`Amount: Rs.${r.amount}`,20,70);
+      doc.text(`TXID: ${txId}`,20,80);doc.text(`Date: ${r.date}`,20,90);
+      doc.save(`Receipt_${r.roll}.pdf`);
+    };
+    alert("✅ Payment accepted successfully!");
+  };
+  reader.readAsDataURL(file);
+};
+
+function renderRecords(){
+  const body=document.getElementById('recordsBody');
+  body.innerHTML='';
+  const searchEl=document.getElementById('searchInput');
+  const search=(searchEl && searchEl.value)?searchEl.value.trim().toLowerCase():'';
+  const data=loadRecords();
+  const filtered=data.filter(r=>{
+    if(!search)return true;
+    return (r.roll||'').toLowerCase().includes(search)||
+           (r.name||'').toLowerCase().includes(search)||
+           (r.phone||'').toLowerCase().includes(search)||
+           (r.course||'').toLowerCase().includes(search);
+  });
+  if(filtered.length===0){body.innerHTML='<tr><td colspan="8">No Records</td></tr>';return;}
+  filtered.forEach(r=>{
+    const tr=document.createElement('tr');
+    let statusClass=r.status==='Verified'?'verified':r.status==='Rejected'?'rejected':'not-verified';
+    tr.innerHTML=`<td>${r.roll}</td><td>${r.name}</td><td>${r.course}</td><td>${r.amount||'-'}</td><td>${r.phone||'-'}</td>
+    <td>${r.date||'-'}</td><td class="${statusClass}">${r.status}</td>
+    <td>
+      <button onclick="updateStatus('${r.roll}','Verified')">✅ Verify</button>
+      <button onclick="updateStatus('${r.roll}','Rejected')">❌ Reject</button>
+      <button onclick="adminRemoveStudent('${r.roll}')">🗑 Remove</button>
+    </td>`;
+    body.appendChild(tr);
+  });
+}
+
+const searchBox=document.getElementById('searchInput');
+if(searchBox){searchBox.addEventListener('input',renderRecords);}
+
+function updateStatus(roll,status){
+  const data=loadRecords();const idx=data.findIndex(x=>x.roll===roll);
+  if(idx===-1)return alert("Record not found");
+  data[idx].status=status;saveRecords(data);renderRecords();
+}
+
+function adminRemoveStudent(roll) {
+  const pass = prompt("🔐 Enter Admin Password to remove this student:");
+  if (pass !== ADMIN_PASSWORD) {
+    alert("❌ Incorrect password! Access denied.");
+    return;
+  }
+  if (!confirm("⚠️ Are you sure you want to permanently remove this student?")) return;
+  const data = loadRecords();
+  const updated = data.filter(x => x.roll !== roll);
+  saveRecords(updated);
+  renderRecords();
+  alert("🗑 Student record removed successfully!");
+}
+
+document.getElementById('exportBtn').onclick=()=>{
+  const pass=prompt("Enter Admin Password to Export CSV:");
+  if(pass!==ADMIN_PASSWORD){alert("❌ Incorrect password! Access denied.");return;}
+  const data=loadRecords();
+  if(!data.length)return alert("No records to export.");
+  const csv=[['Roll','Name','Email','Phone','Course','Amount','Date','Status'],
+    ...data.map(r=>[r.roll,r.name,r.email,r.phone,r.course,r.amount,r.date,r.status])].map(e=>e.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='nis_records.csv';
+  a.click();
+  alert("✅ CSV exported successfully!");
+};
+
+document.getElementById('pdfBtn').onclick=()=>{
+  const pass=prompt("Enter Admin Password to Export PDF:");
+  if(pass!==ADMIN_PASSWORD){alert("❌ Incorrect password! Access denied.");return;}
+  const data=loadRecords();
+  if(!data.length)return alert("No records to export.");
+  const doc=new jsPDF();
+  doc.text("National Institute & DG Skill - Student Records",10,10);
+  let y=25;
+  data.forEach(r=>{
+    doc.text(`Roll: ${r.roll} | Name: ${r.name} | Course: ${r.course} | Rs.${r.amount||0} | ${r.status}`,10,y);
+    y+=8;
+    if(y>270){doc.addPage();y=20;}
+  });
+  doc.save('NIS_Records.pdf');
+  alert("✅ PDF exported successfully!");
+};
+
+document.getElementById('openRecordsBtn').onclick=()=>{
+  const pass=prompt("Enter Admin Password:");
+  if(pass===ADMIN_PASSWORD){document.getElementById('recordsSection').style.display='block';renderRecords();}
+  else alert("Incorrect Password!");
+};
+
+window.onload=renderRecords;
+</script>
+</body>
+</html>
